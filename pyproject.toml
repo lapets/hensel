@@ -13,13 +13,19 @@ authors = [
 readme = "README.rst"
 requires-python = ">=3.7"
 dependencies = [
-    "egcd~=0.5"
+    "egcd~=1.0"
 ]
 
 [project.urls]
 Repository = "https://github.com/lapets/hensel"
+Documentation = "https://hensel.readthedocs.io"
 
 [project.optional-dependencies]
+docs = [
+    "toml~=0.10.2",
+    "sphinx~=5.0",
+    "sphinx-rtd-theme~=1.1.0"
+]
 test = [
     "pytest~=7.4",
     "pytest-cov~=4.0"
@@ -42,4 +48,4 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
-addopts = "--doctest-modules --cov=hensel --cov-report term-missing"
+addopts = "--doctest-modules --ignore=docs --cov=hensel --cov-report term-missing"
