@@ -4,7 +4,7 @@ hensel
 
 Pure-Python implementation of `Hensel lifting <https://en.wikipedia.org/wiki/Hensel%27s_lemma>`__ for square roots modulo a prime power.
 
-|pypi| |readthedocs|
+|pypi| |readthedocs| |actions| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/hensel.svg#
    :target: https://badge.fury.io/py/hensel
@@ -13,6 +13,14 @@ Pure-Python implementation of `Hensel lifting <https://en.wikipedia.org/wiki/Hen
 .. |readthedocs| image:: https://readthedocs.org/projects/hensel/badge/?version=latest
    :target: https://hensel.readthedocs.io/en/latest/?badge=latest
    :alt: Read the Docs documentation status.
+
+.. |actions| image:: https://github.com/lapets/hensel/workflows/lint-test-cover-docs/badge.svg#
+   :target: https://github.com/lapets/hensel/actions/workflows/lint-test-cover-docs.yml
+   :alt: GitHub Actions status.
+
+.. |coveralls| image:: https://coveralls.io/repos/github/lapets/hensel/badge.svg?branch=main
+   :target: https://coveralls.io/github/lapets/hensel?branch=main
+   :alt: Coveralls test coverage summary.
 
 Installation and Usage
 ----------------------
