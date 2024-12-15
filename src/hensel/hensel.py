@@ -7,6 +7,15 @@ from __future__ import annotations
 import doctest
 from egcd import egcd
 
+def _inv(a, m):
+    """
+    Return the modular multiplicative inverse of the supplied integer.
+
+    >>> (_inv(7, 11) * 7) % 11
+    1
+    """
+    return egcd(a, m)[1] % m
+
 def hensel(root: int, prime: int, exponent: int = 1) -> int:
     """
     Lift a square root of a value modulo ``prime ** exponent`` to the square
@@ -57,11 +66,12 @@ def hensel(root: int, prime: int, exponent: int = 1) -> int:
     >>> all(
     ...     pow(r, 2, p ** k) == pow(hensel(r, p, k), 2, p ** (k + 1))
     ...     for k in range(0, 5)
-    ...     for p in [3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
+    ...     for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
     ...     for r in range(1, p ** k) if r % p != 0
     ... )
     True
     """
+    # pylint: disable=too-many-branches
     if not isinstance(root, int):
         raise TypeError(
             "'" + type(root).__name__ + "'" +
@@ -86,24 +96,65 @@ def hensel(root: int, prime: int, exponent: int = 1) -> int:
     if exponent < 0:
         raise ValueError('exponent must be a nonnegative integer')
 
-    root_inv = egcd(root, prime)[1]
-    two_inv = egcd(2, prime)[1]
+    # Perform Hensel lifting (for roots that are coprime with the modulus).
     prime_to_exponent = prime ** exponent
-    c = (
-        ((root_inv * two_inv) % prime)
+    prime_to_exponent_plus_one = prime_to_exponent * prime
+
+    # Specialized calculation for the case in which the supplied prime is 2.
+    if prime == 2:
+        if exponent == 1:
+            return 1
+
+        prime_to_exponent_minus_two = prime ** (exponent - 2)
+        prime_to_exponent_minus_one = prime_to_exponent_minus_two * prime
+
+        if root < prime_to_exponent_minus_two:
+            candidates = [
+                root,
+                prime_to_exponent_minus_one - root
+            ]
+        elif root < prime ** (exponent - 1):
+            candidates = [
+                prime_to_exponent - root,
+                prime_to_exponent_minus_one + root
+            ]
+        elif root < prime_to_exponent_minus_one + prime_to_exponent_minus_two:
+            candidates = [
+                prime_to_exponent + (root - prime_to_exponent_minus_one),
+                prime_to_exponent_plus_one - root
+            ]
+        else:
+            candidates = [
+                prime_to_exponent_plus_one + prime_to_exponent_minus_one - root,
+                prime_to_exponent_plus_one - prime_to_exponent + root
+            ]
+
+        for candidate in candidates:
+            if (
+                pow(candidate, 2, prime_to_exponent)
+                ==
+                pow(candidate, 2, prime_to_exponent_plus_one)
+            ):
+                return candidate
+
+        return None # pragma: no cover # This should never occur.
+
+    multiple = (
+        ((_inv(root, prime) * _inv(2, prime)) % prime)
         *
         (
             (
                 (pow(root, 2, prime_to_exponent) - pow(root, 2))
                 //
                 prime_to_exponent
-            )
-            %
-            prime
+            ) % prime
         )
     ) % prime
 
-    return (root + c * prime_to_exponent) % (prime * prime_to_exponent)
+    lifted = (root + multiple * prime_to_exponent) % (prime * prime_to_exponent)
+
+    # Return the lifted root.
+    return lifted
 
 if __name__ == '__main__':
     doctest.testmod() # pragma: no cover
