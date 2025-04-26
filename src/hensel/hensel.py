@@ -111,7 +111,7 @@ def hensel(root: int, prime: int, exponent: int = 1) -> int:
     >>> all(
     ...     pow(r, 2, p ** k) == pow(hensel(r, p, k), 2, p ** (k + 1))
     ...     for k in range(0, 5)
-    ...     for p in [2, 3, 5, 7, 11, 13] #, 17, 19, 23, 29, 31]
+    ...     for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
     ...     for r in range(0, p ** k)
     ... )
     True
